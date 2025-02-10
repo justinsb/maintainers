@@ -21,13 +21,21 @@ set -o pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SRC_DIR=${REPO_ROOT}/experimental/ksandbox
 cd "${SRC_DIR}"
+BUILD_DIR=${SRC_DIR}/.build
+mkdir -p "${BUILD_DIR}"
 
 KO="go run github.com/google/ko@v0.17.1"
 
 export KO_DOCKER_REPO="${IMAGE_PREFIX:-}ksandbox-agent"
 
 if [[ -z "${TAG:-}" ]]; then
-  TAG=latest
+  # Pick a probably-unique tag
+  export TAG=`date +%Y%m%d%H%M%S`
 fi
 
+AGENT_IMAGE="${IMAGE_PREFIX:-}ksandbox-agent:${TAG}"
+echo "Building image ${AGENT_IMAGE}"
 ${KO} build ${PUSH_FLAGS:-} --tags ${TAG} --platform=linux/amd64,linux/arm64 --bare ./cmd/ksandbox-agent/
+
+# Record the image name in our .build directory
+echo "${AGENT_IMAGE}" > "${BUILD_DIR}/agent-image"

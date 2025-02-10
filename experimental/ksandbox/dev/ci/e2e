@@ -22,20 +22,48 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 SRC_DIR=${REPO_ROOT}/experimental/ksandbox
 cd "${SRC_DIR}"
 
+BUILD_DIR=${SRC_DIR}/.build
+mkdir -p "${BUILD_DIR}"
+
 # Pick a probably-unique tag
 export TAG=`date +%Y%m%d%H%M%S`
 
 # Build the image
-echo "Building image"
 export IMAGE_PREFIX=fake.registry/
 PUSH_FLAGS=--local dev/tasks/build-images
 
-AGENT_IMAGE="${IMAGE_PREFIX:-}ksandbox-agent:${TAG}"
+# Create a kind cluster
+echo "Creating kind cluster"
+kind create cluster --name ksandbox-ci
+
+# Register a cleanup function to delete the cluster on exit
+function cleanup() {
+  echo "Deleting kind cluster"
+  kind delete cluster --name ksandbox-ci
+}
+trap cleanup EXIT
+
+# Set up kubeconfig
+echo "Setting up kubeconfig"
+kind export kubeconfig --name ksandbox-ci
 
 # Load the image into kind
 echo "Loading image into kind"
-kind load docker-image ${AGENT_IMAGE}
+AGENT_IMAGE=$(cat .build/agent-image)
+kind load docker-image --name ksandbox-ci ${AGENT_IMAGE}
+
+# Wait for the cluster to be initialized
+# We need the serviceaccount default/default to be created
+echo "Waiting for serviceaccount default/default to be created"
+kubectl wait --for=create serviceaccount/default -n default --timeout=300s
 
 # Run the test client
+# TODO: Replace with a real test written in Go
 echo "Running test client"
-go run ./cmd/ksandbox-testclient/ --agent ${AGENT_IMAGE} --image golang:1.23.5 go version
+TEST_RESULT=$(go run ./cmd/ksandbox-testclient/ --agent ${AGENT_IMAGE} --image golang:1.23.5 go version)
+
+echo "Test result: ${TEST_RESULT}"
+
+# Delete the kind cluster
+echo "Deleting kind cluster"
+kind delete cluster --name ksandbox-ci

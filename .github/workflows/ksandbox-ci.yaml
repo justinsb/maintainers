@@ -1,0 +1,14 @@
+on:
+  push:
+    paths:
+      - 'experimental/ksandbox/**'
+
+jobs:
+  ci-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: 'experimental/ksandbox/go.mod'
+      - run: dev/ci/e2e

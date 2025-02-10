@@ -202,9 +202,9 @@ func (c *AgentClient) buildPod(namespace string, image string) (*corev1.Pod, err
 		},
 	}
 	container.Resources.Requests = make(corev1.ResourceList)
-	container.Resources.Requests[corev1.ResourceCPU] = resource.MustParse("4")
-	container.Resources.Requests[corev1.ResourceMemory] = resource.MustParse("8Gi")
-	container.Resources.Requests[corev1.ResourceEphemeralStorage] = resource.MustParse("10Gi")
+	container.Resources.Requests[corev1.ResourceCPU] = resource.MustParse("1")
+	container.Resources.Requests[corev1.ResourceMemory] = resource.MustParse("1Gi")
+	container.Resources.Requests[corev1.ResourceEphemeralStorage] = resource.MustParse("1Gi")
 
 	container.Resources.Limits = make(corev1.ResourceList)
 	for k, v := range container.Resources.Requests {
