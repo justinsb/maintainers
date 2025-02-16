@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Workflow.Title}} - Kubernetes KEP Explorer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Kubernetes KEP Explorer</h1>
+        <nav>
+            <a href="/">← Back to KEP List</a>
+        </nav>
+    </header>
+    <main>
+        <article class="kep-detail">
+            <h1>{{.Workflow.Title}}</h1>
+            <div class="kep-metadata">
+                <p><strong>KEP Number:</strong> {{.Workflow.Number}}</p>
+                <p><strong>Status:</strong> {{.Workflow.Status}}</p>
+                <p><strong>Authors:</strong> {{range .Workflow.Authors}}{{.}} {{end}}</p>
+                <p><strong>GitHub:</strong> <a href="{{.Workflow.TextURL}}" target="_blank">View on GitHub</a></p>
+            </div>
+
+            <div class="kep-content markdown-body">
+                {{.ContentHTML}}
+            </div>
+        </article>
+    </main>
+    <footer>
+        <p>Kubernetes KEP Explorer - A tool for exploring Kubernetes Enhancement Proposals</p>
+    </footer>
+</body>
+</html> 

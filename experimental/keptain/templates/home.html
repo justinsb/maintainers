@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes KEP Explorer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body>
+    <header>
+        <h1>Kubernetes KEP Explorer</h1>
+    </header>
+    <main>
+        <div class="search-container">
+            <input type="text" 
+                   name="q" 
+                   placeholder="Search KEPs..." 
+                   value="{{.Query}}"
+                   hx-get="/api/search"
+                   hx-trigger="input changed delay:150ms, search"
+                   hx-target="#kep-list"
+                   hx-indicator="#search-indicator">
+            <div id="search-indicator" class="htmx-indicator"></div>
+            <div id="search-status" class="search-status"></div>
+        </div>
+        <div class="kep-list" id="kep-list">
+            {{template "kep_list" .}}
+        </div>
+    </main>
+    <footer>
+        <p>Kubernetes KEP Explorer - A tool for exploring Kubernetes Enhancement Proposals</p>
+    </footer>
+</body>
+</html>
+
+{{define "kep_list"}}
+    {{range .AllWorkflows}}
+    <div class="kep-card">
+        <h2><a href="/kep/{{.Path}}">{{.Title}}</a></h2>
+        <div class="kep-metadata">
+            <p><strong>KEP Number:</strong> {{.Number}}</p>
+            <p><strong>Status:</strong> {{.Status}}</p>
+            <p><strong>Authors:</strong> {{range .Authors}}{{.}} {{end}}</p>
+        </div>
+    </div>
+    {{end}}
+{{end}}
