@@ -38,6 +38,7 @@ func (s *Server) Run(endpoint string) error {
 	mux.HandleFunc("GET /", s.handleHome)
 	mux.HandleFunc("GET /api/search", s.handleSearch)
 	mux.HandleFunc("GET /kep/{path...}", s.handleKEP)
+	mux.HandleFunc("GET /pullrequests/", s.handlePullRequestList)
 
 	fmt.Println("Server starting on :8080...")
 	return http.ListenAndServe(endpoint, mux)
@@ -157,6 +158,34 @@ func (s *Server) handleKEP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl := template.Must(template.ParseFiles("templates/kep.html"))
+	if err := tmpl.Execute(w, data); err != nil {
+		http.Error(w, fmt.Sprintf("Error rendering template: %v", err), http.StatusInternalServerError)
+	}
+}
+
+// PullRequestsListPageData is the data model for the PR "list" page
+type PullRequestsListPageData struct {
+	PullRequests []*model.PullRequest
+}
+
+// handlePullRequestList handles the PR "list" page, which is the page that displays the list of pull requests against KEPs.
+func (s *Server) handlePullRequestList(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	log := klog.FromContext(ctx)
+
+	log.Info("Listing KEP pull requests")
+
+	prs, err := s.kepRepo.ListPullRequests()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error listing pull requests: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	data := PullRequestsListPageData{
+		PullRequests: prs,
+	}
+
+	tmpl := template.Must(template.ParseFiles("templates/pullrequests/list.html"))
 	if err := tmpl.Execute(w, data); err != nil {
 		http.Error(w, fmt.Sprintf("Error rendering template: %v", err), http.StatusInternalServerError)
 	}

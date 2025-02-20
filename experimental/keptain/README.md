@@ -14,6 +14,13 @@ First, you should check out the KEPs repo:
 git clone https://github.com/kubernetes/enhancements.git
 ```
 
+Then, you need to fetch the pull requests:
+
+```
+cd enhancements
+git fetch origin '+refs/pull/*:refs/pull/*'
+```
+
 Then, you can run the website:
 ```
 go run .

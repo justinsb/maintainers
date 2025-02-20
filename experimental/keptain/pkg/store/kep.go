@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,18 +13,22 @@ import (
 
 // Repository represents a KEP repository
 type Repository struct {
-	basePath string
-	keps     map[string]*model.KEP
+	basePath     string
+	keps         map[string]*model.KEP
+	pullRequests []*model.PullRequest
 }
 
 // NewRepository creates a new KEP repository instance
-func NewRepository(basePath string) (*Repository, error) {
+func NewRepository(ctx context.Context, basePath string) (*Repository, error) {
 	r := &Repository{
 		basePath: basePath,
 		keps:     make(map[string]*model.KEP),
 	}
 	if err := r.loadKEPs(); err != nil {
 		return nil, fmt.Errorf("error loading KEPs: %v", err)
+	}
+	if err := r.indexPullRequests(ctx); err != nil {
+		return nil, fmt.Errorf("error indexing pull requests: %v", err)
 	}
 	return r, nil
 }

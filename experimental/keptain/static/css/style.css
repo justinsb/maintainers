@@ -33,6 +33,32 @@ header nav {
     margin-top: 1rem;
 }
 
+.nav-tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 0.5rem;
+}
+
+.nav-tabs .tab {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.nav-tabs .tab:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-tabs .tab.active {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+    font-weight: 500;
+}
+
 header nav a {
     color: white;
     text-decoration: none;

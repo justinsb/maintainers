@@ -18,7 +18,7 @@ func main() {
 
 func run(ctx context.Context) error {
 	// Initialize the KEP repository
-	kepRepo, err := store.NewRepository("enhancements")
+	kepRepo, err := store.NewRepository(ctx, "enhancements")
 	if err != nil {
 		return fmt.Errorf("error creating KEP repository: %w", err)
 	}

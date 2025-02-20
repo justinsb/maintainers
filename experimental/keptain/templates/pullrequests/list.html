@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes KEP Explorer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body>
+    <header>
+        <h1>Kubernetes KEP Explorer</h1>
+        <nav class="nav-tabs">
+            <a href="/" class="tab">Accepted KEPs</a>
+            <a href="/pullrequests/" class="tab active">In Progress Changes</a>
+        </nav>
+    </header>
+    <main>
+        <div class="pr-list" id="pr-list">
+            {{range .PullRequests}}
+            <div class="pr-card">
+                <h2><a href="/pr/{{.Number}}">{{.Title}}</a></h2>
+                <div class="pr-metadata">
+                    <p><strong>PR Number:</strong> {{.Number}}</p>
+                    <p><strong>Title:</strong> {{.Title}}</p>
+                    <p><strong>Author:</strong> {{.Author}}</p>
+                </div>
+            </div>
+            {{end}}
+    </main>
+    <footer>
+        <p>Kubernetes KEP Explorer - A tool for exploring Kubernetes Enhancement Proposals</p>
+    </footer>
+</body>
+</html>
+
